@@ -22,6 +22,7 @@ targets:
       base:
         INFOPLIST_FILE: Trace/Resources/Info.plist
         PRODUCT_NAME: Trace
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         TARGETED_DEVICE_FAMILY: "1"
         CODE_SIGN_ENTITLEMENTS: Trace/Resources/Trace.entitlements
         GENERATE_INFOPLIST_FILE: NO
