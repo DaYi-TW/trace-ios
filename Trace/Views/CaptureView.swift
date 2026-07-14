@@ -17,7 +17,7 @@ struct CaptureView: View {
                     .padding(.horizontal, 28)
                 Button("建立事件並加入截圖") { showingNewEvent = true }
                     .buttonStyle(.borderedProminent)
-                Text("Share Extension 與從其他 App 直接加入，會在下一個測試版本加入。")
+                Text("安裝測試版後，可在相簿分享選單選擇「加入留痕」，再回到 App 補齊事件資訊。")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)

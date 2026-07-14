@@ -14,15 +14,26 @@ targets:
     platform: iOS
     sources:
       - path: Trace
+      - path: Shared
     settings:
       base:
         INFOPLIST_FILE: Trace/Resources/Info.plist
         PRODUCT_NAME: Trace
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         TARGETED_DEVICE_FAMILY: "1"
+        CODE_SIGN_ENTITLEMENTS: Trace/Resources/Trace.entitlements
         GENERATE_INFOPLIST_FILE: NO
-    entitlements:
-      path: Trace/Resources/Trace.entitlements
-      properties:
-        com.apple.developer.default-data-protection: NSFileProtectionComplete
-        com.apple.developer.associated-domains: []
+  TraceShare:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: TraceShare
+      - path: Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: tw.dayi.trace.share
+        INFOPLIST_FILE: TraceShare/Info.plist
+        PRODUCT_NAME: TraceShare
+        APPLICATION_EXTENSION_API_ONLY: YES
+        CODE_SIGN_ENTITLEMENTS: TraceShare/TraceShare.entitlements
+        GENERATE_INFOPLIST_FILE: NO

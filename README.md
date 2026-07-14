@@ -9,6 +9,8 @@
 3. 保存原始檔、雜湊與匯入時間。
 4. 對圖片執行裝置端 OCR，並讓使用者確認結果。
 5. 將事件匯出為 PDF 摘要。
+6. 從 iOS 分享選單將截圖交給「加入留痕」Share Extension，回到 App 後自動建立待整理事件。
+7. 使用 Face ID／Touch ID／裝置密碼保護開啟畫面，並建立或還原密碼加密的完整備份。
 
 ## 在 Mac 上開啟
 
@@ -24,10 +26,14 @@ open Trace.xcodeproj
 
 ## 尚未產品化的功能
 
-- Share Extension 與 App Group 交接。
-- Face ID／App 專屬密碼、手動加密備份與完整還原。
 - SpeechAnalyzer 事後口述轉錄。
 - Foundation Models 結構化整理。
 - 對話跨圖去重、長圖拼接與自動遮罩。
 
-這些功能須在核心流程的 TestFlight 回饋成立後，逐項加入並以真機測試。
+SpeechAnalyzer 與 Foundation Models 須在核心流程的 TestFlight 回饋成立後逐項加入；分享擴充、App Group、Face ID 和備份則必須先在真機完成簽署、還原與資料保護測試。
+
+## 首次真機設定
+
+1. 在 Apple Developer 與 Xcode 的兩個 target 啟用同一個 App Group：`group.tw.dayi.trace`。
+2. 在兩個 target 選取相同的 Development Team，讓 provisioning profile 包含 App Groups。
+3. 加入實際的 1024×1024 App Icon 後，才可上傳 TestFlight。

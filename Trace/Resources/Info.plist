@@ -24,6 +24,8 @@
     <true/>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>留痕需要讀取你主動選擇的截圖，將它關聯到工作事件。</string>
+    <key>NSFaceIDUsageDescription</key>
+    <string>留痕使用 Face ID 保護工作事件與附件內容。</string>
     <key>UILaunchScreen</key>
     <dict/>
     <key>UISupportedInterfaceOrientations</key>

@@ -96,7 +96,6 @@ struct EventDetailView: View {
                 let fileName = "聊天截圖-\(index + 1).\(EvidenceStore.imageFileExtension(for: data))"
                 let attachment = try EvidenceStore.store(data: data, preferredFileName: fileName, kind: .image)
                 attachment.event = event
-                event.attachments.append(attachment)
                 modelContext.insert(attachment)
             } catch {
                 errorMessage = error.localizedDescription
@@ -112,7 +111,6 @@ struct EventDetailView: View {
             do {
                 let attachment = try EvidenceStore.store(fileAt: url)
                 attachment.event = event
-                event.attachments.append(attachment)
                 modelContext.insert(attachment)
             } catch {
                 errorMessage = error.localizedDescription
