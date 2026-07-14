@@ -69,13 +69,14 @@ private extension NSItemProvider {
             UTType($0)?.conforms(to: .image) == true
         } ?? UTType.image.identifier
         let fileExtension = UTType(typeIdentifier)?.preferredFilenameExtension ?? "img"
-        try await withCheckedThrowingContinuation { continuation in
+        let data: Data = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Data, Error>) in
             loadDataRepresentation(forTypeIdentifier: typeIdentifier) { data, error in
                 if let error { continuation.resume(throwing: error) }
                 else if let data { continuation.resume(returning: data) }
                 else { continuation.resume(throwing: ShareError.noImages) }
             }
         }
+        return (data, fileExtension)
     }
 }
 
