@@ -31,6 +31,9 @@ struct NewEventView: View {
                         .frame(minHeight: 90)
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(TraceTheme.paper)
+            .tint(TraceTheme.moss)
             .navigationTitle("建立事件")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("取消") { dismiss() } }

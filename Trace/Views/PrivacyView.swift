@@ -6,7 +6,19 @@ struct PrivacyView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section("目前版本的資料原則") {
+                Section {
+                    VStack(alignment: .leading, spacing: 9) {
+                        Text("你的紀錄，\n只在你手上。")
+                            .font(TraceTheme.titleFont(31))
+                            .foregroundStyle(.white)
+                        Text("保留原始截圖、你的補充與可確認的事件時間線。")
+                            .font(.system(size: 13))
+                            .foregroundStyle(.white.opacity(0.68))
+                    }
+                    .padding(.vertical, 16)
+                    .listRowBackground(TraceTheme.vault)
+                }
+                Section("資料原則") {
                     Label("附件與事件資料保留在這台裝置。", systemImage: "iphone")
                     Label("不讀取 LINE 或其他聊天 App 的帳號與對話資料。", systemImage: "hand.raised")
                     Label("OCR 僅產生待確認文字，不會覆蓋原始截圖。", systemImage: "text.viewfinder")
@@ -31,7 +43,14 @@ struct PrivacyView: View {
                         .foregroundStyle(.secondary)
                 }
             }
-            .navigationTitle("資料與隱私")
+            .scrollContentBackground(.hidden)
+            .background(TraceTheme.vault)
+            .foregroundStyle(.white)
+            .tint(Color(red: 0.72, green: 0.86, blue: 0.73))
+            .preferredColorScheme(.dark)
+            .navigationTitle("保護")
+            .toolbarBackground(TraceTheme.vault, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
         }
     }
 }

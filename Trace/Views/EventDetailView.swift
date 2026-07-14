@@ -14,6 +14,22 @@ struct EventDetailView: View {
 
     var body: some View {
         Form {
+            Section {
+                VStack(alignment: .leading, spacing: 9) {
+                    Text("CASE PACKAGE · DRAFT")
+                        .font(.system(size: 10, weight: .bold, design: .rounded))
+                        .tracking(1.1)
+                        .foregroundStyle(TraceTheme.muted)
+                    Text(event.title)
+                        .font(TraceTheme.titleFont(26))
+                        .foregroundStyle(TraceTheme.ink)
+                    Text("\(event.attachments.count) 份材料 · 事件資料可隨時修正")
+                        .font(.system(size: 12))
+                        .foregroundStyle(TraceTheme.muted)
+                }
+                .padding(.vertical, 8)
+            }
+            .listRowBackground(TraceTheme.paper)
             Section("事件") {
                 TextField("標題", text: $event.title)
                 DatePicker("發生時間", selection: $event.occurredAt)
@@ -57,6 +73,9 @@ struct EventDetailView: View {
                 Text("PDF 是事件整理摘要；原始附件應以完整案件包另行選擇分享。")
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(TraceTheme.paper)
+        .tint(TraceTheme.moss)
         .navigationTitle("事件詳情")
         .navigationBarTitleDisplayMode(.inline)
         .onChange(of: event.title) { _, _ in event.touch() }

@@ -6,24 +6,26 @@ struct CaptureView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 20) {
-                Image(systemName: "bubble.left.and.bubble.right.fill")
-                    .font(.system(size: 46))
-                    .foregroundStyle(.indigo)
-                Text("先保存，再慢慢整理")
-                    .font(.title2.bold())
-                Text("建立一件事件後，可匯入 LINE、Teams 或其他聊天截圖。留痕只處理你主動選擇分享的檔案。")
+                Spacer()
+                Text("加入材料")
+                    .font(TraceTheme.titleFont(34))
+                    .foregroundStyle(TraceTheme.ink)
+                Text("從相簿、Files 或 iOS 分享選單保存你主動選擇的材料。先保存，整理可以稍後再做。")
                     .multilineTextAlignment(.center)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(TraceTheme.muted)
                     .padding(.horizontal, 28)
                 Button("建立事件並加入截圖") { showingNewEvent = true }
-                    .buttonStyle(.borderedProminent)
+                    .buttonStyle(TracePrimaryButtonStyle())
+                    .padding(.horizontal, 24)
                 Text("安裝測試版後，可在相簿分享選單選擇「加入留痕」，再回到 App 補齊事件資訊。")
                     .font(.footnote)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(TraceTheme.muted)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 32)
+                Spacer()
             }
-            .navigationTitle("快速加入")
+            .background(TraceTheme.paper)
+            .navigationTitle("加入")
             .sheet(isPresented: $showingNewEvent) { NewEventView() }
         }
     }

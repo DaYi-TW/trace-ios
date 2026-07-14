@@ -16,7 +16,7 @@ struct RootView: View {
                     PrivacyView()
                         .tabItem { Label("資料與隱私", systemImage: "lock.shield") }
                 }
-                .tint(.indigo)
+                .tint(TraceTheme.moss)
             } else {
                 LockScreen()
             }
@@ -38,7 +38,7 @@ private struct LockScreen: View {
         VStack(spacing: 18) {
             Image(systemName: "lock.shield.fill")
                 .font(.system(size: 48))
-                .foregroundStyle(.indigo)
+                .foregroundStyle(TraceTheme.moss)
             Text("留痕已鎖定")
                 .font(.title2.bold())
             Text("使用 Face ID、Touch ID 或裝置密碼解鎖。")
@@ -52,6 +52,7 @@ private struct LockScreen: View {
             }
         }
         .padding()
+        .background(TraceTheme.paper)
         .task { await appLock.authenticate() }
     }
 }
