@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>留痕 Trace · iOS Mockup Directions</title>
+  <!--
+    Assumption: This is an overview for design review, not a final app screen.
+    Product wordmark is intentionally typographic until a real brand logo exists.
+    Direction A is recommended: warm enough for a difficult moment, but structured enough for a case package.
+  -->
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <style>
+    :root {
+      --canvas: #eceae5;
+      --ink: #18201c;
+      --muted: #6c716b;
+      --rule: rgba(24,32,28,.14);
+      --paper: #fbfaf6;
+      --rust: #ba5b3d;
+      --moss: #334d3d;
+      --slate: #17212a;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-width: 1180px; background: var(--canvas); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang TC", sans-serif; }
+    #root { min-height: 100vh; }
+    .page { max-width: 1640px; margin: 0 auto; padding: 58px 64px 80px; }
+    .masthead { display: flex; align-items: end; justify-content: space-between; border-bottom: 1px solid var(--rule); padding-bottom: 28px; margin-bottom: 34px; }
+    .eyebrow { color: var(--moss); font-size: 11px; letter-spacing: .17em; text-transform: uppercase; font-weight: 700; }
+    h1 { font-family: "Iowan Old Style", "Songti TC", serif; font-size: 42px; line-height: 1.08; letter-spacing: -.04em; font-weight: 500; margin: 9px 0 0; }
+    .masthead p { margin: 0; width: 330px; font-size: 13px; line-height: 1.65; color: var(--muted); }
+    .directions { display: grid; grid-template-columns: repeat(3, minmax(320px,1fr)); gap: 26px; }
+    .direction { min-height: 926px; padding: 22px 22px 28px; border: 1px solid var(--rule); background: rgba(255,255,255,.24); display: flex; flex-direction: column; align-items: center; }
+    .direction-copy { width: 100%; min-height: 128px; margin-bottom: 18px; }
+    .direction-copy h2 { font-family: "Iowan Old Style", "Songti TC", serif; margin: 6px 0 8px; font-size: 26px; letter-spacing: -.025em; font-weight: 500; }
+    .direction-copy p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.65; }
+    .direction-copy .tag { color: var(--rust); font-size: 11px; font-weight: 700; letter-spacing: .13em; }
+    .direction-note { width: 100%; margin-top: 21px; padding-top: 16px; border-top: 1px solid var(--rule); color: var(--muted); font-size: 12px; line-height: 1.55; }
+    .direction-note b { color: var(--ink); font-weight: 650; }
+    .app { height: 100%; min-height: 764px; overflow: hidden; position: relative; font-size: 14px; }
+    .top { padding: 24px 22px 12px; display: flex; align-items: center; justify-content: space-between; }
+    .wordmark { font-family: "Iowan Old Style", "Songti TC", serif; font-size: 19px; letter-spacing: -.04em; }
+    .wordmark small { font-family: -apple-system, sans-serif; font-size: 10px; letter-spacing: .12em; color: inherit; opacity: .55; margin-left: 5px; }
+    .nav-button { width: 29px; height: 29px; border-radius: 50%; display: grid; place-items: center; font-size: 16px; }
+    .bottom-nav { position: absolute; left: 0; right: 0; bottom: 0; height: 65px; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid rgba(0,0,0,.08); font-size: 10px; }
+    .nav-item { display: grid; place-items: center; gap: 4px; opacity: .48; }
+    .nav-item.active { opacity: 1; font-weight: 700; }
+    .nav-mark { width: 16px; height: 16px; border: 1.4px solid currentColor; border-radius: 5px; }
+    .nav-mark.plus { border-radius: 50%; position: relative; }
+    .nav-mark.plus:before, .nav-mark.plus:after { content: ""; position: absolute; background: currentColor; left: 3px; right: 3px; height: 1.4px; top: 6px; }
+    .nav-mark.plus:after { top: 3px; bottom: 3px; left: 6px; width: 1.4px; height: auto; }
+    .nav-mark.lock { border-radius: 4px; height: 12px; margin-top: 4px; position: relative; }
+    .nav-mark.lock:before { content: ""; position: absolute; width: 7px; height: 6px; border: 1.4px solid currentColor; border-bottom: none; border-radius: 6px 6px 0 0; left: 3px; top: -6px; }
+
+    /* A — Quiet Evidence */
+    .quiet { background: #f5f4ed; color: #1e2a23; }
+    .quiet .top { padding-top: 29px; }
+    .quiet .nav-button { background: #e6e5dc; color: #4b574f; }
+    .quiet-hero { padding: 28px 24px 22px; }
+    .quiet-hero .date { color: #68756c; font-size: 12px; margin-bottom: 13px; }
+    .quiet-hero h3 { font-family: "Iowan Old Style", "Songti TC", serif; font-size: 31px; font-weight: 500; line-height: 1.18; letter-spacing: -.045em; margin: 0; }
+    .quiet-hero p { margin: 12px 0 0; color: #677169; font-size: 13px; line-height: 1.58; }
+    .quiet-add { margin: 0 20px 23px; padding: 15px 16px; background: #314d3d; color: white; display: flex; justify-content: space-between; align-items: center; border-radius: 18px; }
+    .quiet-add b { font-size: 14px; letter-spacing: -.01em; }
+    .quiet-add span { font-size: 22px; font-weight: 300; }
+    .quiet-section { padding: 0 20px; }
+    .quiet-section-title { display: flex; justify-content: space-between; color: #667168; font-size: 12px; margin-bottom: 11px; }
+    .quiet-section-title b { color: #1f2923; font-size: 13px; }
+    .quiet-event { background: #fffefa; padding: 16px; border-radius: 16px; margin-bottom: 10px; box-shadow: 0 5px 18px rgba(45,57,47,.06); }
+    .quiet-event small { color: #7e877e; font-size: 11px; }
+    .quiet-event strong { display: block; font-size: 15px; margin: 4px 0 6px; font-weight: 650; }
+    .quiet-event p { font-size: 12px; color: #637068; line-height: 1.45; margin: 0; }
+    .quiet-event .dots { margin-top: 12px; display: flex; gap: 4px; }
+    .quiet-event .dot { width: 5px; height: 5px; border-radius: 50%; background: #b5bdb6; }
+    .quiet-event .dot:first-child { background: #ba5b3d; }
+    .quiet .bottom-nav { background: rgba(245,244,237,.94); }
+
+    /* B — Case Ledger */
+    .ledger { background: #f7f7f5; color: #16212b; }
+    .ledger .top { border-bottom: 1px solid #d9ddd9; padding: 23px 20px 13px; }
+    .ledger .nav-button { border: 1px solid #c8cfca; color: #44525e; }
+    .ledger-matter { padding: 19px 20px 16px; border-bottom: 1px solid #d9ddd9; }
+    .ledger-matter small { font-size: 10px; color: #687674; letter-spacing: .1em; font-weight: 700; }
+    .ledger-matter h3 { margin: 7px 0 12px; font-size: 23px; line-height: 1.26; letter-spacing: -.03em; }
+    .ledger-chip { display: inline-flex; padding: 5px 8px; font-size: 10px; color: #355943; background: #e7efe8; border-radius: 4px; }
+    .timeline { padding: 10px 20px 0; }
+    .timeline-label { color: #67716c; text-transform: uppercase; letter-spacing: .1em; font-size: 10px; margin: 8px 0 10px; }
+    .ledger-row { display: grid; grid-template-columns: 50px 1fr; border-top: 1px solid #dde0dc; padding: 13px 0; gap: 12px; }
+    .ledger-row time { font-size: 11px; color: #69746d; line-height: 1.4; }
+    .ledger-row h4 { margin: 0 0 5px; font-size: 13px; line-height: 1.35; }
+    .ledger-row p { margin: 0; font-size: 11px; color: #65716a; line-height: 1.5; }
+    .ledger-row .evidence { display: inline-block; margin-top: 8px; padding: 3px 5px; font-size: 9px; color: #5c4137; background: #f1e7df; }
+    .ledger-export { position: absolute; left: 20px; right: 20px; bottom: 82px; height: 45px; display: grid; place-items: center; background: #172c22; color: white; font-size: 13px; font-weight: 650; }
+    .ledger .bottom-nav { background: #f7f7f5; }
+
+    /* C — Private Vault */
+    .vault { color: #eff3ee; background: #102019; }
+    .vault .top { padding-top: 27px; }
+    .vault .wordmark small { color: #a2aea5; }
+    .vault .nav-button { background: rgba(255,255,255,.1); }
+    .vault-main { padding: 35px 22px 0; }
+    .vault-overline { color: #a9c7b1; font-size: 11px; letter-spacing: .12em; }
+    .vault-main h3 { font-family: "Iowan Old Style", "Songti TC", serif; font-weight: 500; font-size: 31px; line-height: 1.18; letter-spacing: -.04em; margin: 10px 0 13px; }
+    .vault-main p { color: #b5c1b8; line-height: 1.55; font-size: 13px; margin: 0; }
+    .vault-lock { display: flex; align-items: center; gap: 11px; margin: 24px 0 26px; padding: 14px; background: #183126; border: 1px solid rgba(184,225,194,.17); }
+    .vault-lock .keyhole { width: 24px; height: 24px; border: 1px solid #93b69d; border-radius: 50%; display: grid; place-items: center; font-size: 11px; }
+    .vault-lock strong { display: block; font-size: 12px; }
+    .vault-lock span { color: #a9baaf; font-size: 10px; }
+    .vault-stat-grid { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid rgba(255,255,255,.16); border-left: 1px solid rgba(255,255,255,.16); }
+    .vault-stat { padding: 16px 13px; border-right: 1px solid rgba(255,255,255,.16); border-bottom: 1px solid rgba(255,255,255,.16); }
+    .vault-stat b { font-family: "Iowan Old Style", serif; font-size: 26px; font-weight: 500; }
+    .vault-stat span { display: block; color: #a8b8ad; margin-top: 4px; font-size: 10px; }
+    .vault-action { margin-top: 22px; background: #d9e6d8; color: #163022; height: 52px; display: grid; place-items: center; font-size: 13px; font-weight: 700; }
+    .vault .bottom-nav { border-color: rgba(255,255,255,.12); background: rgba(16,32,25,.96); }
+
+    .legend { max-width: 760px; margin: 37px auto 0; display: flex; gap: 26px; justify-content: center; font-size: 12px; color: var(--muted); }
+    .legend span { display: flex; align-items: center; gap: 7px; }
+    .legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState } = React;
+
+    const iosFrameStyles = {
+      wrapper: { display: 'inline-block', padding: 12, background: '#000', borderRadius: 60, boxShadow: '0 0 0 2px #1f2937, 0 20px 60px rgba(0,0,0,0.3)', position: 'relative' },
+      screen: { position: 'relative', borderRadius: 48, overflow: 'hidden', background: '#fff' },
+      statusBar: { position: 'absolute', top: 0, left: 0, right: 0, height: 54, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px', fontSize: 16, fontWeight: 600, fontFamily: '-apple-system, "SF Pro Text", sans-serif', zIndex: 20, pointerEvents: 'none' },
+      dynamicIsland: { position: 'absolute', top: 12, left: '50%', transform: 'translateX(-50%)', width: 124, height: 36, background: '#000', borderRadius: 999, zIndex: 30 },
+      statusIcons: { display: 'flex', alignItems: 'center', gap: 6 },
+      signalIcon: { display: 'flex', alignItems: 'flex-end', gap: 2, height: 12 },
+      signalBar: { width: 3, background: 'currentColor', borderRadius: 1 },
+      batteryIcon: { width: 26, height: 12, border: '1.5px solid currentColor', borderRadius: 3, padding: 1, position: 'relative', opacity: .8 },
+      batteryCap: { position: 'absolute', top: 3, right: -3, width: 2, height: 6, background: 'currentColor', borderRadius: '0 1px 1px 0' },
+      content: { position: 'absolute', top: 54, left: 0, right: 0, bottom: 34, overflow: 'hidden' },
+      homeIndicator: { position: 'absolute', bottom: 10, left: '50%', transform: 'translateX(-50%)', width: 140, height: 5, background: 'rgba(0,0,0,.3)', borderRadius: 999, zIndex: 10 },
+      homeIndicatorDark: { background: 'rgba(255,255,255,.5)' },
+    };
+
+    function IosFrame({ children, width = 342, height = 741, time = '9:41', battery = 84, darkMode = false }) {
+      const textColor = darkMode ? '#fff' : '#000';
+      return <div style={iosFrameStyles.wrapper}>
+        <div style={{...iosFrameStyles.screen, width, height, background: darkMode ? '#000' : '#fff'}}>
+          <div style={{...iosFrameStyles.statusBar, color: textColor}}>
+            <span>{time}</span><div style={iosFrameStyles.statusIcons}><div style={iosFrameStyles.signalIcon}><div style={{...iosFrameStyles.signalBar,height:4}}/><div style={{...iosFrameStyles.signalBar,height:6}}/><div style={{...iosFrameStyles.signalBar,height:9}}/><div style={{...iosFrameStyles.signalBar,height:11}}/></div><svg width="16" height="12" viewBox="0 0 16 12" fill="none" style={{color:textColor}}><path d="M8 11.5a1 1 0 100-2 1 1 0 000 2z" fill="currentColor"/><path d="M3 7.5a7 7 0 0110 0" stroke="currentColor" strokeWidth="1.3" fill="none" strokeLinecap="round"/><path d="M1 4.5a11 11 0 0114 0" stroke="currentColor" strokeWidth="1.3" fill="none" strokeLinecap="round" opacity=".7"/></svg><div style={iosFrameStyles.batteryIcon}><div style={{width:`${battery}%`,height:'100%',background:'currentColor',borderRadius:1,opacity:.9}}/><div style={iosFrameStyles.batteryCap}/></div></div>
+          </div><div style={iosFrameStyles.dynamicIsland}/><div style={iosFrameStyles.content}>{children}</div><div style={{...iosFrameStyles.homeIndicator,...(darkMode?iosFrameStyles.homeIndicatorDark:{})}}/>
+        </div>
+      </div>;
+    }
+
+    function Nav({active}) { return <div className="bottom-nav">{[['events','▢','事件'],['add','＋','加入'],['privacy','⌁','保護']].map(([id,mark,label])=><div className={'nav-item '+(active===id?'active':'')} key={id}><span className={'nav-mark '+(id==='add'?'plus':id==='privacy'?'lock':'')}>{id==='events'?'':null}</span><span>{label}</span></div>)}</div> }
+
+    function QuietEvidence() { return <div className="app quiet"><div className="top"><div className="wordmark">留痕 <small>TRACE</small></div><div className="nav-button">···</div></div><div className="quiet-hero"><div className="date">星期一 · 7 月 14 日</div><h3>先留下來。<br/>慢慢整理也可以。</h3><p>資料預設留在這台 iPhone，不會自動送給任何人。</p></div><div className="quiet-add"><b>加入一段工作對話</b><span>＋</span></div><div className="quiet-section"><div className="quiet-section-title"><b>最近事件</b><span>查看全部</span></div><div className="quiet-event"><small>今天 · 16:30</small><strong>臨時要求重做報告</strong><p>已加入 3 張 LINE 對話截圖，尚待確認人物與日期。</p><div className="dots"><i className="dot"/><i className="dot"/><i className="dot"/></div></div><div className="quiet-event"><small>7 月 11 日 · 會議</small><strong>未被通知的部門會議</strong><p>已完成事件整理，附 1 份 Email。</p></div></div><Nav active="events"/></div> }
+    function CaseLedger() { return <div className="app ledger"><div className="top"><div className="wordmark">留痕 <small>TRACE</small></div><div className="nav-button">⌁</div></div><div className="ledger-matter"><small>CASE PACKAGE · DRAFT</small><h3>2026 年 7 月<br/>工作事件整理</h3><span className="ledger-chip">3 件事件 · 6 份附件</span></div><div className="timeline"><div className="timeline-label">事件時間線</div><div className="ledger-row"><time>07/14<br/>16:22</time><div><h4>臨時要求隔日重做資料</h4><p>使用者詢問調整範圍，對方未提供具體說明。</p><span className="evidence">E-003 · LINE 截圖</span></div></div><div className="ledger-row"><time>07/11<br/>10:00</time><div><h4>未收到部門會議通知</h4><p>使用者於會後得知已討論工作分工。</p><span className="evidence">E-002 · Email</span></div></div><div className="ledger-row"><time>07/08<br/>14:10</time><div><h4>工作交付方式改變</h4><p>尚待補充：是否有其他同事收到相同指示。</p></div></div></div><div className="ledger-export">預覽案件摘要 PDF</div><Nav active="events"/></div> }
+    function PrivateVault() { return <div className="app vault"><div className="top"><div className="wordmark">留痕 <small>TRACE</small></div><div className="nav-button">•••</div></div><div className="vault-main"><div className="vault-overline">PRIVATE WORKSPACE</div><h3>你的紀錄，<br/>只在你手上。</h3><p>保留原始截圖、你的補充與可確認的事件時間線。</p><div className="vault-lock"><div className="keyhole">⌁</div><div><strong>已受 Face ID 保護</strong><span>最後備份：今天 17:10</span></div></div><div className="vault-stat-grid"><div className="vault-stat"><b>06</b><span>已保存附件</span></div><div className="vault-stat"><b>03</b><span>待整理事件</span></div><div className="vault-stat"><b>02</b><span>已確認人物</span></div><div className="vault-stat"><b>01</b><span>可匯出案件包</span></div></div><div className="vault-action">整理今天的對話截圖</div></div><Nav active="privacy"/></div> }
+
+    function Direction({number,title,copy,note,children}) { return <article className="direction"><div className="direction-copy"><div className="tag">DIRECTION {number}</div><h2>{title}</h2><p>{copy}</p></div>{children}<div className="direction-note">{note}</div></article> }
+    function App() { return <main className="page"><header className="masthead"><div><div className="eyebrow">Trace · iOS Visual Directions</div><h1>不是「蒐證工具」的冷硬感，<br/>而是使用者能安心打開的第一頁。</h1></div><p>三個畫面都保留相同的核心：截圖、事件、PDF；差別在於它先傳遞的是安定、專業，還是私密控制感。</p></header><section className="directions"><Direction number="01 · Recommended" title="溫和留痕" copy="以暖紙色、苔綠與帶人味的標題字，降低事件剛發生時的心理壓力。" note={<><b>適合：</b>面向一般員工的主 App。第一眼先讓人願意保存，再逐步引導整理。</>}><IosFrame><QuietEvidence/></IosFrame></Direction><Direction number="02" title="案件編目" copy="更像專業人士看的事件卷宗；以清晰時間線與附件編號建立可信度。" note={<><b>適合：</b>案件包、時間線與 PDF 預覽。可作為「溫和留痕」點進事件後的第二層。</>}><IosFrame><CaseLedger/></IosFrame></Direction><Direction number="03" title="私密保險箱" copy="深色、克制、資訊密度較高；把「你掌控資料」做成明確的產品感受。" note={<><b>適合：</b>資料與隱私、備份、解鎖後首頁。建議不要作為全 App 預設，避免太像資安工具。</>}><IosFrame darkMode><PrivateVault/></IosFrame></Direction></section><div className="legend"><span><i style={{background:'#334d3d'}}/>溫和留痕：情緒安全</span><span><i style={{background:'#17212a'}}/>案件編目：專業交接</span><span><i style={{background:'#102019'}}/>私密保險箱：控制感</span></div></main> }
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
