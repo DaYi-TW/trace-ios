@@ -81,8 +81,10 @@ struct EventDetailView: View {
         .alert("無法完成操作", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
             Button("好", role: .cancel) { errorMessage = nil }
         } message: { Text(errorMessage ?? "") }
-        .sheet(item: $exportURL) { url in
-            ActivityView(items: [url])
+        .sheet(isPresented: Binding(get: { exportURL != nil }, set: { if !$0 { exportURL = nil } })) {
+            if let exportURL {
+                ActivityView(items: [exportURL])
+            }
         }
     }
 

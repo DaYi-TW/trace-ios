@@ -48,7 +48,6 @@ enum PDFExporter {
     }
 
     private static func draw(_ text: String, attributes: [NSAttributedString.Key: Any], x: CGFloat, y: inout CGFloat, width: CGFloat) {
-        let rect = CGRect(x: x, y: y, width: width, height: 680)
         let size = (text as NSString).boundingRect(
             with: CGSize(width: width, height: .greatestFiniteMagnitude),
             options: [.usesLineFragmentOrigin, .usesFontLeading],

@@ -36,8 +36,10 @@ struct BackupView: View {
             if case .success(let url) = result { restore(from: url) }
             if case .failure(let error) = result { errorMessage = error.localizedDescription }
         }
-        .sheet(item: $backupURL) { url in
-            ActivityView(items: [url])
+        .sheet(isPresented: Binding(get: { backupURL != nil }, set: { if !$0 { backupURL = nil } })) {
+            if let backupURL {
+                ActivityView(items: [backupURL])
+            }
         }
         .alert("備份完成", isPresented: Binding(get: { message != nil }, set: { if !$0 { message = nil } })) {
             Button("好", role: .cancel) { message = nil }
