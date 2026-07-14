@@ -1,0 +1,10 @@
+.DS_Store
+DerivedData/
+build/
+xcuserdata/
+*.xcuserstate
+*.moved-aside
+*.pbxuser
+*.mode1v3
+*.mode2v3
+.swiftpm/
