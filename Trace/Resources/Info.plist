@@ -5,7 +5,7 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>zh_TW</string>
     <key>CFBundleDisplayName</key>
-    <string>留痕</string>
+    <string>留痕 Trace</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
@@ -22,10 +22,14 @@
     <string>1</string>
     <key>LSRequiresIPhoneOS</key>
     <true/>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>留痕需要在你主動開始且畫面可見時錄下工作紀錄，並將音檔保存到目前事件。</string>
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>留痕只在你要求時使用 Apple SpeechAnalyzer 將已保存的音檔轉成逐字稿。</string>
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>留痕需要讀取你主動選擇的截圖，將它關聯到工作事件。</string>
+    <string>留痕需要讀取你選擇的圖片，整理成事件附件。</string>
     <key>NSFaceIDUsageDescription</key>
-    <string>留痕使用 Face ID 保護工作事件與附件內容。</string>
+    <string>使用 Face ID 保護事件紀錄與證據附件。</string>
     <key>UILaunchScreen</key>
     <dict/>
     <key>UISupportedInterfaceOrientations</key>

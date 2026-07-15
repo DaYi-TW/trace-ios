@@ -7,6 +7,7 @@ struct AttachmentDetailView: View {
     @Query(sort: \ConversationMessage.orderIndex) private var allMessages: [ConversationMessage]
     @State private var isRecognizing = false
     @State private var isVerifying = false
+    @State private var isTranscribing = false
     @State private var errorMessage: String?
 
     private var messages: [ConversationMessage] {
@@ -23,12 +24,14 @@ struct AttachmentDetailView: View {
                 if !messages.isEmpty {
                     messageSection
                 }
+            } else if attachment.kind == .audio {
+                audioSection
             }
         }
         .navigationTitle("附件詳情")
         .navigationBarTitleDisplayMode(.inline)
         .overlay {
-            if isRecognizing {
+            if isRecognizing || isTranscribing {
                 ProgressView("正在辨識文字…")
                     .padding()
                     .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 12))
@@ -143,6 +146,40 @@ struct AttachmentDetailView: View {
         }
     }
 
+    private var audioSection: some View {
+        Section("語音逐字稿") {
+            if #available(iOS 26.0, *) {
+                Button {
+                    transcribeAudio()
+                } label: {
+                    Label(isTranscribing ? "轉錄中…" : "使用 Apple SpeechAnalyzer 轉錄", systemImage: "waveform")
+                }
+                .disabled(isTranscribing)
+            } else {
+                Text("Apple SpeechAnalyzer 需要 iOS 26 或以上；原始音檔仍可保存與匯出。")
+                    .foregroundStyle(.secondary)
+            }
+
+            if !attachment.rawOCRText.isEmpty {
+                Text("系統逐字稿（請核對音檔）")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                TextEditor(text: $attachment.rawOCRText)
+                    .frame(minHeight: 160)
+                Text("確認後逐字稿")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                TextEditor(text: $attachment.confirmedText)
+                    .frame(minHeight: 160)
+                Button("確認這份逐字稿") {
+                    attachment.confirmedText = attachment.rawOCRText
+                    attachment.ocrStatus = "已由使用者確認"
+                    saveChanges()
+                }
+            }
+        }
+    }
+
     private var messageSection: some View {
         Section("訊息排列草稿") {
             ForEach(messages) { message in
@@ -252,6 +289,23 @@ struct AttachmentDetailView: View {
             saveChanges()
         } catch {
             errorMessage = error.localizedDescription
+        }
+    }
+
+    private func transcribeAudio() {
+        guard #available(iOS 26.0, *) else { return }
+        isTranscribing = true
+        Task {
+            defer { isTranscribing = false }
+            do {
+                let url = try EvidenceStore.url(for: attachment)
+                let transcript = try await SpeechAnalyzerService.transcribe(fileAt: url)
+                attachment.rawOCRText = transcript
+                attachment.ocrStatus = "已完成 Apple SpeechAnalyzer 轉錄，待使用者確認"
+                saveChanges()
+            } catch {
+                errorMessage = error.localizedDescription
+            }
         }
     }
 

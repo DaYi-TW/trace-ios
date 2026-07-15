@@ -11,6 +11,8 @@ struct EventDetailView: View {
     @State private var isImporting = false
     @State private var errorMessage: String?
     @State private var exportURL: URL?
+    @State private var showingAudioRecording = false
+    @StateObject private var audioRecorder = AudioRecorderService()
 
     var body: some View {
         Form {
@@ -79,6 +81,16 @@ struct EventDetailView: View {
                 }
                 .onDelete(perform: deleteAttachments)
             }
+            Section("語音紀錄") {
+                Button {
+                    showingAudioRecording = true
+                } label: {
+                    Label("開始可見錄音", systemImage: "record.circle")
+                }
+                Text("錄音期間會顯示明確的錄音畫面與 iOS 麥克風狀態；停止後才會保存。")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
             Section {
                 Button { exportPDF() } label: {
                     Label("匯出事件摘要 PDF", systemImage: "square.and.arrow.up")
@@ -118,6 +130,9 @@ struct EventDetailView: View {
             if let exportURL {
                 ActivityView(items: [exportURL])
             }
+        }
+        .sheet(isPresented: $showingAudioRecording) {
+            AudioRecordingView(recorder: audioRecorder, event: event)
         }
     }
 
