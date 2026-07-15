@@ -20,11 +20,11 @@ enum SpeechTranscriptionError: LocalizedError {
 @available(iOS 26.0, *)
 enum SpeechAnalyzerService {
     static func transcribe(fileAt url: URL, locale: Locale = Locale(identifier: "zh-TW")) async throws -> String {
-        guard let supportedLocale = SpeechTranscriber.supportedLocale(equivalentTo: locale) else {
+        guard let supportedLocale = await SpeechTranscriber.supportedLocale(equivalentTo: locale) else {
             throw SpeechTranscriptionError.unsupportedLocale
         }
 
-        let transcriber = SpeechTranscriber(locale: supportedLocale, preset: .offlineTranscription)
+        let transcriber = SpeechTranscriber(locale: supportedLocale, preset: .transcription)
         async let transcriptionFuture = try transcriber.results.reduce("") { text, result in
             text + String(result.text.characters)
         }
@@ -38,8 +38,8 @@ enum SpeechAnalyzerService {
         }
 
         let transcript = try await transcriptionFuture
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !transcript.isEmpty else { throw SpeechTranscriptionError.noTranscript }
-        return transcript
+        let trimmedTranscript = transcript.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedTranscript.isEmpty else { throw SpeechTranscriptionError.noTranscript }
+        return trimmedTranscript
     }
 }
