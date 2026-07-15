@@ -19,7 +19,6 @@ final class EventRevision {
     var uncertainties: [String]
     var createdAt: Date
 
-    @Relationship(inverse: \TraceEvent.revisions)
     var event: TraceEvent?
 
     init(
