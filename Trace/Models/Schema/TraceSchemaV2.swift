@@ -9,7 +9,8 @@ enum TraceSchemaV2: VersionedSchema {
             EvidenceAttachment.self,
             EventRevision.self,
             OCRResult.self,
-            ConfirmedTranscript.self
+            ConfirmedTranscript.self,
+            ConversationMessage.self
         ]
     }
 }

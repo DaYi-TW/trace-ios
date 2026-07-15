@@ -1,6 +1,30 @@
 import Foundation
 import SwiftData
 
+struct OCRTextObservation: Codable, Hashable, Identifiable {
+    let id: UUID
+    let text: String
+    let confidence: Double
+    let x: Double
+    let y: Double
+    let width: Double
+    let height: Double
+
+    var midpointX: Double { x + width / 2 }
+    var midpointY: Double { y + height / 2 }
+}
+
+struct OCRDraft {
+    let rawText: String
+    let observations: [OCRTextObservation]
+    let engine: String
+    let localeIdentifiers: [String]
+
+    var observationsData: Data {
+        (try? JSONEncoder().encode(observations)) ?? Data()
+    }
+}
+
 @Model
 final class OCRResult {
     var id: UUID

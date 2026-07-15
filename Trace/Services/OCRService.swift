@@ -8,7 +8,9 @@ enum OCRServiceError: LocalizedError {
 }
 
 enum OCRService {
-    static func recognizeText(in imageData: Data) async throws -> String {
+    static let localeIdentifiers = ["zh-Hant", "en-US"]
+
+    static func recognize(in imageData: Data) async throws -> OCRDraft {
         guard let image = UIImage(data: imageData), let cgImage = image.cgImage else {
             throw OCRServiceError.unreadableImage
         }
@@ -19,12 +21,41 @@ enum OCRService {
                     continuation.resume(throwing: error)
                     return
                 }
-                let observations = request.results as? [VNRecognizedTextObservation] ?? []
-                let lines = observations.compactMap { $0.topCandidates(1).first?.string }
-                continuation.resume(returning: lines.joined(separator: "\n"))
+
+                let observations = (request.results as? [VNRecognizedTextObservation] ?? [])
+                    .compactMap { observation -> OCRTextObservation? in
+                        guard let candidate = observation.topCandidates(1).first,
+                              !candidate.string.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+                            return nil
+                        }
+                        let box = observation.boundingBox
+                        return OCRTextObservation(
+                            id: UUID(),
+                            text: candidate.string,
+                            confidence: Double(candidate.confidence),
+                            x: Double(box.origin.x),
+                            y: Double(box.origin.y),
+                            width: Double(box.size.width),
+                            height: Double(box.size.height)
+                        )
+                    }
+                    .sorted {
+                        if abs($0.midpointY - $1.midpointY) > 0.02 {
+                            return $0.midpointY > $1.midpointY
+                        }
+                        return $0.x < $1.x
+                    }
+
+                let text = observations.map(\.text).joined(separator: "\n")
+                continuation.resume(returning: OCRDraft(
+                    rawText: text,
+                    observations: observations,
+                    engine: "Vision VNRecognizeTextRequest",
+                    localeIdentifiers: localeIdentifiers
+                ))
             }
             request.recognitionLevel = .accurate
-            request.recognitionLanguages = ["zh-Hant", "en-US"]
+            request.recognitionLanguages = localeIdentifiers
             request.usesLanguageCorrection = true
 
             DispatchQueue.global(qos: .userInitiated).async {
@@ -35,5 +66,9 @@ enum OCRService {
                 }
             }
         }
+    }
+
+    static func recognizeText(in imageData: Data) async throws -> String {
+        (try await recognize(in: imageData)).rawText
     }
 }

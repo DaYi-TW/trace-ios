@@ -37,6 +37,12 @@ final class EvidenceAttachment {
     var rawOCRText: String
     var confirmedText: String
     var ocrStatus: String
+    // Chat screenshot metadata. Values are user-confirmed or explicitly left unknown.
+    var sourceApp: String = ""
+    var conversationType: String = ""
+    var sideMapping: String = ""
+    var screenshotCompleteness: String = ""
+    var latestOCRResultID: UUID? = nil
     var event: TraceEvent?
 
     var kind: EvidenceKind { EvidenceKind(rawValue: kindRawValue) ?? .document }
