@@ -98,7 +98,7 @@ enum PDFExporter {
         }
 
         let output = FileManager.default.temporaryDirectory.appendingPathComponent("Trace-\(event.id.uuidString).pdf")
-        try data.write(to: output, options: .atomic)
+        try data.write(to: output, options: [.atomic, .completeFileProtection])
         return output
     }
 

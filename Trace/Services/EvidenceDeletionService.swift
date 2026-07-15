@@ -27,6 +27,7 @@ enum EvidenceDeletionService {
         event: TraceEvent?,
         from modelContext: ModelContext
     ) throws {
+        let attachmentIDs = Set(attachments.map(\.id))
         let operationID = UUID()
         let trashDirectory = try EvidenceStore.directory(named: "Operations")
             .appendingPathComponent("trash-\(operationID.uuidString)", isDirectory: true)
@@ -44,6 +45,21 @@ enum EvidenceDeletionService {
             for attachment in attachments {
                 modelContext.delete(attachment)
             }
+
+            // OCR, transcript, and conversation rows use UUID references rather
+            // than SwiftData relationships, so they must be removed explicitly.
+            let ocrResults = try modelContext.fetch(FetchDescriptor<OCRResult>())
+                .filter { attachmentIDs.contains($0.attachmentID) }
+            ocrResults.forEach { modelContext.delete($0) }
+
+            let confirmedTranscripts = try modelContext.fetch(FetchDescriptor<ConfirmedTranscript>())
+                .filter { attachmentIDs.contains($0.sourceID) }
+            confirmedTranscripts.forEach { modelContext.delete($0) }
+
+            let conversationMessages = try modelContext.fetch(FetchDescriptor<ConversationMessage>())
+                .filter { attachmentIDs.contains($0.attachmentID) }
+            conversationMessages.forEach { modelContext.delete($0) }
+
             if let event {
                 modelContext.delete(event)
             }

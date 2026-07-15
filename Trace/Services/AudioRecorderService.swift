@@ -40,6 +40,10 @@ final class AudioRecorderService: NSObject, ObservableObject, AVAudioRecorderDel
         guard recorder.record() else {
             throw AudioRecorderError.cannotStart
         }
+        try? FileManager.default.setAttributes(
+            [.protectionKey: FileProtectionType.complete],
+            ofItemAtPath: url.path
+        )
         self.recorder = recorder
         self.startedAt = .now
         self.elapsed = 0

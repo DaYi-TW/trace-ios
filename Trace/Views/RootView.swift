@@ -4,6 +4,7 @@ struct RootView: View {
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.modelContext) private var modelContext
     @StateObject private var appLock = AppLockManager()
+    @State private var isPrivacyShielded = false
 
     var body: some View {
         Group {
@@ -22,13 +23,47 @@ struct RootView: View {
             }
         }
         .environmentObject(appLock)
+        .overlay {
+            if isPrivacyShielded {
+                PrivacyShieldView()
+                    .accessibilityHidden(true)
+            }
+        }
         .onChange(of: scenePhase) { _, phase in
-            if phase == .background { appLock.lockForBackground() }
+            switch phase {
+            case .inactive:
+                // Cover the UI before iOS captures the app-switcher snapshot.
+                isPrivacyShielded = true
+            case .background:
+                appLock.lockForBackground()
+                isPrivacyShielded = true
+            case .active:
+                isPrivacyShielded = appLock.isEnabled && !appLock.isUnlocked
+            @unknown default:
+                isPrivacyShielded = true
+            }
+        }
+        .onChange(of: appLock.isUnlocked) { _, isUnlocked in
+            if isUnlocked && scenePhase == .active {
+                isPrivacyShielded = false
+            }
         }
         .task {
             _ = try? DataMigrationService.backfillOriginalRevisions(in: modelContext)
             _ = try? SharedImportIngestor.ingestPendingBatches(into: modelContext)
         }
+    }
+}
+
+private struct PrivacyShieldView: View {
+    var body: some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+            Image(systemName: "lock.shield.fill")
+                .font(.system(size: 34, weight: .semibold))
+                .foregroundStyle(.white.opacity(0.85))
+        }
+        .transition(.opacity)
     }
 }
 

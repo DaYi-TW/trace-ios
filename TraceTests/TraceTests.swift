@@ -67,6 +67,40 @@ final class TraceTests: XCTestCase {
         XCTAssertTrue(try context.fetch(FetchDescriptor<EvidenceAttachment>()).isEmpty)
     }
 
+    func testDeletingEventRemovesStructuredEvidenceRows() throws {
+        let container = try makeContainer()
+        let context = ModelContext(container)
+        let attachment = try EvidenceStore.store(
+            data: Data("structured evidence".utf8),
+            preferredFileName: "chat.txt",
+            kind: .document
+        )
+        let event = TraceEvent(title: "Delete structured rows")
+        attachment.event = event
+        event.attachments.append(attachment)
+        context.insert(event)
+        context.insert(attachment)
+
+        let ocr = OCRResult(attachmentID: attachment.id, rawText: "sensitive OCR")
+        let transcript = ConfirmedTranscript(sourceID: attachment.id, text: "sensitive transcript")
+        let message = ConversationMessage(
+            attachmentID: attachment.id,
+            orderIndex: 0,
+            side: .left,
+            text: "sensitive chat message"
+        )
+        context.insert(ocr)
+        context.insert(transcript)
+        context.insert(message)
+        try context.save()
+
+        try EvidenceDeletionService.delete(event: event, from: context)
+
+        XCTAssertTrue(try context.fetch(FetchDescriptor<OCRResult>()).isEmpty)
+        XCTAssertTrue(try context.fetch(FetchDescriptor<ConfirmedTranscript>()).isEmpty)
+        XCTAssertTrue(try context.fetch(FetchDescriptor<ConversationMessage>()).isEmpty)
+    }
+
     func testPDFExportCreatesPortableEventPackage() throws {
         let event = TraceEvent(
             title: "PDF export",
@@ -80,6 +114,12 @@ final class TraceTests: XCTestCase {
         let data = try Data(contentsOf: url)
         XCTAssertGreaterThan(data.count, 500)
         XCTAssertEqual(String(data: data.prefix(5), encoding: .ascii), "%PDF-")
+    }
+
+    func testBackupRequiresHighEntropyEnoughPassword() {
+        XCTAssertFalse(BackupService.isAcceptablePassword("123456"))
+        XCTAssertFalse(BackupService.isAcceptablePassword("passwordpassword"))
+        XCTAssertTrue(BackupService.isAcceptablePassword("trace-private-2026"))
     }
 
     private func makeContainer() throws -> ModelContainer {
