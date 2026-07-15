@@ -67,6 +67,21 @@ final class TraceTests: XCTestCase {
         XCTAssertTrue(try context.fetch(FetchDescriptor<EvidenceAttachment>()).isEmpty)
     }
 
+    func testPDFExportCreatesPortableEventPackage() throws {
+        let event = TraceEvent(
+            title: "PDF export",
+            context: "Team meeting",
+            narrative: "A factual note",
+            workImpact: "Follow-up required"
+        )
+        let url = try PDFExporter.makePDF(for: event)
+        defer { try? FileManager.default.removeItem(at: url) }
+
+        let data = try Data(contentsOf: url)
+        XCTAssertGreaterThan(data.count, 500)
+        XCTAssertEqual(String(data: data.prefix(5), encoding: .ascii), "%PDF-")
+    }
+
     private func makeContainer() throws -> ModelContainer {
         let schema = Schema(versionedSchema: TraceSchemaV2.self)
         let configuration = ModelConfiguration(isStoredInMemoryOnly: true)
