@@ -26,6 +26,7 @@ struct RootView: View {
             if phase == .background { appLock.lockForBackground() }
         }
         .task {
+            _ = try? DataMigrationService.backfillOriginalRevisions(in: modelContext)
             _ = try? SharedImportIngestor.ingestPendingBatches(into: modelContext)
         }
     }

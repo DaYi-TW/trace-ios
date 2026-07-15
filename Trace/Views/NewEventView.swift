@@ -53,7 +53,17 @@ struct NewEventView: View {
             narrative: narrative,
             workImpact: workImpact
         )
+        let revision = EventRevision(
+            event: event,
+            source: .original,
+            context: context,
+            narrative: narrative,
+            workImpact: workImpact
+        )
+        event.currentRevisionID = revision.id
+        event.revisions.append(revision)
         modelContext.insert(event)
+        modelContext.insert(revision)
         dismiss()
     }
 }

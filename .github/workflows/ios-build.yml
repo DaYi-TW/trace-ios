@@ -24,3 +24,12 @@ jobs:
           -configuration Debug
           CODE_SIGNING_ALLOWED=NO
           build
+      - name: Run unit tests
+        run: >-
+          xcodebuild
+          -project Trace.xcodeproj
+          -scheme Trace
+          -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest'
+          -only-testing:TraceTests
+          CODE_SIGNING_ALLOWED=NO
+          test

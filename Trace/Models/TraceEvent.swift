@@ -11,9 +11,14 @@ final class TraceEvent {
     var workImpact: String
     var createdAt: Date
     var updatedAt: Date
+    var currentRevisionID: UUID?
+    var deletedAt: Date?
 
     @Relationship(deleteRule: .cascade, inverse: \EvidenceAttachment.event)
     var attachments: [EvidenceAttachment] = []
+
+    @Relationship(deleteRule: .cascade, inverse: \EventRevision.event)
+    var revisions: [EventRevision] = []
 
     init(
         title: String,
@@ -30,9 +35,18 @@ final class TraceEvent {
         self.workImpact = workImpact
         self.createdAt = .now
         self.updatedAt = .now
+        self.currentRevisionID = nil
+        self.deletedAt = nil
     }
 
     func touch() {
         updatedAt = .now
+    }
+
+    var currentRevision: EventRevision? {
+        if let currentRevisionID {
+            return revisions.first { $0.id == currentRevisionID }
+        }
+        return revisions.max { $0.versionNumber < $1.versionNumber }
     }
 }

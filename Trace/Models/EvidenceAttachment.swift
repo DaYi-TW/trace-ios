@@ -23,7 +23,12 @@ final class EvidenceAttachment {
     var relativePath: String
     var kindRawValue: String
     var sha256: String
+    var byteCount: Int64
+    var uti: String
     var importedAt: Date
+    var fileCreatedAt: Date?
+    var integrityStatusRawValue: String
+    var orderIndex: Int
     var sourceDescription: String
     var imageState: String
     var displayedMessageTime: String
@@ -49,7 +54,12 @@ final class EvidenceAttachment {
         self.relativePath = relativePath
         self.kindRawValue = kind.rawValue
         self.sha256 = sha256
+        self.byteCount = 0
+        self.uti = "public.data"
         self.importedAt = .now
+        self.fileCreatedAt = nil
+        self.integrityStatusRawValue = EvidenceIntegrityStatus.valid.rawValue
+        self.orderIndex = 0
         self.sourceDescription = sourceDescription
         self.imageState = imageState
         self.displayedMessageTime = ""
@@ -59,4 +69,16 @@ final class EvidenceAttachment {
         self.confirmedText = ""
         self.ocrStatus = "尚未辨識"
     }
+
+    var integrityStatus: EvidenceIntegrityStatus {
+        get { EvidenceIntegrityStatus(rawValue: integrityStatusRawValue) ?? .unverified }
+        set { integrityStatusRawValue = newValue.rawValue }
+    }
+}
+
+enum EvidenceIntegrityStatus: String, Codable {
+    case unverified
+    case valid
+    case mismatch
+    case missing
 }

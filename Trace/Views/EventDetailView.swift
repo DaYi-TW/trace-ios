@@ -34,14 +34,28 @@ struct EventDetailView: View {
                 TextField("標題", text: $event.title)
                 DatePicker("發生時間", selection: $event.occurredAt)
                 TextField("工作情境", text: $event.context)
-                LabeledContent("原始陳述") {
-                    TextEditor(text: $event.narrative)
-                        .frame(minHeight: 120)
+                NavigationLink("新增事件修正版") {
+                    RevisionEditorView(event: event)
                 }
-                LabeledContent("工作影響") {
-                    TextEditor(text: $event.workImpact)
-                        .frame(minHeight: 80)
+            }
+            Section("目前修訂版") {
+                if let revision = event.currentRevision {
+                    LabeledContent("工作情境") { Text(revision.context.isEmpty ? "未填寫" : revision.context) }
+                    LabeledContent("事件陳述") { Text(revision.narrative.isEmpty ? "未填寫" : revision.narrative) }
+                    LabeledContent("工作影響") { Text(revision.workImpact.isEmpty ? "未填寫" : revision.workImpact) }
+                    Text("版本 (revision.versionNumber) · (revision.sourceRawValue)")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                } else {
+                    Text("尚未建立修訂版").foregroundStyle(.secondary)
                 }
+            }
+            Section("原始陳述") {
+                Text(event.narrative.isEmpty ? "未填寫" : event.narrative)
+                    .textSelection(.enabled)
+                Text("原始陳述建立後不可覆寫；需要補充時請新增修正版。")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
             }
             Section("加入材料") {
                 PhotosPicker(selection: $selectedPhotos, maxSelectionCount: 20, matching: .images) {
@@ -141,12 +155,15 @@ struct EventDetailView: View {
     }
 
     private func deleteAttachments(at offsets: IndexSet) {
-        for index in offsets {
-            let attachment = event.attachments[index]
-            if let url = try? EvidenceStore.url(for: attachment) {
-                try? FileManager.default.removeItem(at: url)
+        let attachments = offsets.compactMap { index in
+            event.attachments.indices.contains(index) ? event.attachments[index] : nil
+        }
+        do {
+            for attachment in attachments {
+                try EvidenceDeletionService.delete(attachment: attachment, from: modelContext)
             }
-            modelContext.delete(attachment)
+        } catch {
+            errorMessage = error.localizedDescription
         }
         event.touch()
     }

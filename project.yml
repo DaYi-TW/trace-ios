@@ -8,6 +8,20 @@ settings:
     SWIFT_VERSION: "5.10"
     PRODUCT_BUNDLE_IDENTIFIER: tw.dayi.trace
     DEVELOPMENT_TEAM: ""
+schemes:
+  Trace:
+    build:
+      targets:
+        Trace: all
+        TraceShare: all
+        TraceTests: test
+        TraceUITests: test
+    test:
+      config: Debug
+      gatherCoverageData: true
+      targets:
+        - name: TraceTests
+        - name: TraceUITests
 targets:
   Trace:
     type: application
@@ -40,3 +54,28 @@ targets:
         APPLICATION_EXTENSION_API_ONLY: YES
         CODE_SIGN_ENTITLEMENTS: TraceShare/TraceShare.entitlements
         GENERATE_INFOPLIST_FILE: NO
+  TraceTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: TraceTests
+    dependencies:
+      - target: Trace
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: tw.dayi.trace.tests
+        TEST_HOST: $(BUILT_PRODUCTS_DIR)/Trace.app/Trace
+        BUNDLE_LOADER: $(TEST_HOST)
+        GENERATE_INFOPLIST_FILE: YES
+  TraceUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: TraceUITests
+    dependencies:
+      - target: Trace
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: tw.dayi.trace.uitests
+        TEST_TARGET_NAME: Trace
+        GENERATE_INFOPLIST_FILE: YES

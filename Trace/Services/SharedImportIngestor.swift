@@ -13,7 +13,15 @@ enum SharedImportIngestor {
                 occurredAt: batch.createdAt,
                 narrative: "此事件由 iOS 分享選單建立。請確認對話日期、人物、順序及與工作事件的關聯。"
             )
+            let revision = EventRevision(
+                event: event,
+                source: .original,
+                narrative: event.narrative
+            )
+            event.currentRevisionID = revision.id
+            event.revisions.append(revision)
             modelContext.insert(event)
+            modelContext.insert(revision)
 
             for item in batch.items {
                 let sourceURL = directory.appendingPathComponent(item.storedFileName)

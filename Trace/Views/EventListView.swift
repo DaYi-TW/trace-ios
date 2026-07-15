@@ -5,6 +5,7 @@ struct EventListView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \TraceEvent.updatedAt, order: .reverse) private var events: [TraceEvent]
     @State private var showingNewEvent = false
+    @State private var errorMessage: String?
 
     var body: some View {
         NavigationStack {
@@ -46,7 +47,7 @@ struct EventListView: View {
                                 }
                                 .buttonStyle(.plain)
                                 .contextMenu {
-                                    Button(role: .destructive) { modelContext.delete(event) } label: {
+                                    Button(role: .destructive) { deleteEvent(event) } label: {
                                         Label("刪除事件", systemImage: "trash")
                                     }
                                 }
@@ -63,6 +64,19 @@ struct EventListView: View {
                 EventDetailView(event: event)
             }
             .sheet(isPresented: $showingNewEvent) { NewEventView() }
+            .alert("無法刪除事件", isPresented: Binding(get: { errorMessage != nil }, set: { if !$0 { errorMessage = nil } })) {
+                Button("好", role: .cancel) { errorMessage = nil }
+            } message: {
+                Text(errorMessage ?? "")
+            }
+        }
+    }
+
+    private func deleteEvent(_ event: TraceEvent) {
+        do {
+            try EvidenceDeletionService.delete(event: event, from: modelContext)
+        } catch {
+            errorMessage = error.localizedDescription
         }
     }
 
