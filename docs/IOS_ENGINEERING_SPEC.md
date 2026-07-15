@@ -1,10 +1,15 @@
 # 留痕 Trace：iOS 公開測試版工程規格書
 
-> 文件版本：1.0  
-> 文件日期：2026-07-15  
-> 適用版本：External Beta Candidate  
-> Bundle ID：`tw.dayi.trace`  
-> Share Extension：`tw.dayi.trace.share`  
+> 文件版本：1.0
+>
+> 文件日期：2026-07-15
+>
+> 適用版本：External Beta Candidate
+>
+> Bundle ID：`tw.dayi.trace`
+>
+> Share Extension：`tw.dayi.trace.share`
+>
 > App Group：`group.tw.dayi.trace`
 
 ## 1. 規格目的
@@ -507,4 +512,3 @@ Trace-Case-<export-id>.zip
 | SIGNING | App Group 與 Share Extension 真機通過 |
 | LEGAL | 隱私政策、測試條款與產製聲明 |
 | QA | CI、unit、UI、fixture 與 smoke tests 通過 |
-
